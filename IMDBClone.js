@@ -8,6 +8,7 @@ let mainContentDiv = document.querySelector("#main-content");
 let searchResult;
 let favourites = [];
 let lastSearched;
+let visitRepository = document.querySelector("#visit-repository-div .header-text");
 
 let savedArrayString;
 let favouritesMoviesJSON;
@@ -424,6 +425,12 @@ function addEventListenerToBodyForHidingSuggestionsOnClick(){
         }
     });
 }
+function addEventListenerToVisitRepository(){
+    visitRepository.addEventListener('click', function(){
+        console.log("clicked");
+        window.open('https://github.com/rushab-rayalwar/IMDbClone');    
+    })
+}
 function main() {
     savedArrayString = localStorage.getItem('favouriteMovies');
     if(savedArrayString){
@@ -438,5 +445,6 @@ function main() {
     addEventListenerToFavouritesButton();
     addEventListenerToBackButton();
     addEventListenerToBodyForHidingSuggestionsOnClick();
+    addEventListenerToVisitRepository();
 }
 main();
