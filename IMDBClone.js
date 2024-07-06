@@ -93,7 +93,7 @@ addToListButton.addEventListener('click', function(){
 }
 async function displayFavourites(){
     let requests = favourites.map(async function(id){
-        let request = await fetch(`http://www.omdbapi.com/?&apikey=1f627bef&i=${id}`);
+        let request = await fetch(`https://www.omdbapi.com/?&apikey=1f627bef&i=${id}`);
         let movieObject = await request.json();
         return movieObject;       // returns a promise that resolves into the movie object
     });
@@ -385,7 +385,7 @@ function displayResult(object, whoCalled) {
     }
 }
 function fetchInfo(name, whoCalled){
-    let url = `http://www.omdbapi.com/?&apikey=1f627bef&s=${name.toString()}`;
+    let url = `https://www.omdbapi.com/?&apikey=1f627bef&s=${name.toString()}`;
     let request = fetch(url);
     request.then((response)=>{
         return response.json();
