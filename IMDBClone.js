@@ -72,7 +72,6 @@ movieDiv.addEventListener('click',function(event){
 });
 addToListButton.addEventListener('click', function(){
     let idOfTheMovieOnWhichTheButtonIsPresent = imdbID;
-    console.log("favourites", favourites,"id", idOfTheMovieOnWhichTheButtonIsPresent);
     let parentElement = this.parentElement.parentElement;
     parentElement.style.opacity = '0';
     setTimeout(function(){
@@ -81,8 +80,7 @@ addToListButton.addEventListener('click', function(){
         favourites.splice(indexOfIdToBeDeleted, 1);
         favouritesMoviesJSON = JSON.stringify(favourites);
         localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
-        console.log('favouritesMoviesJSON -', favouritesMoviesJSON);
-
+        
         parentElement.remove();
         if(favourites.length === 0){
             let emptySpanHtml = `<span id="list-empty">Empty...</span>`;
@@ -147,7 +145,6 @@ function displayMovie(movieObject){
                 isIdFavourite = 1;
                 favouritesMoviesJSON = JSON.stringify(favourites);
                 localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
-                console.log('favouriteMoviesJSON -',favouroitesMoviesJSON);
             } else {
                 favouritesButtonIconHuge.className = 'fa-regular fa-bookmark';
                 let indexToBeRemoved = favourites.indexOf(imdbID);
@@ -156,7 +153,6 @@ function displayMovie(movieObject){
                 isIdFavourite = -1;
                 favouritesMoviesJSON = JSON.stringify(favourites);
                 localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
-                console.log('favouriteMoviesJSON -',favouroitesMoviesJSON);
             }
         });
         let actualMovieInfo = document.createElement("div");
@@ -232,7 +228,6 @@ function loadMovie(imdbID){
     request.then(function(response){
         return response.json();
     }).then(function(movieObject){
-        console.log("movie object received on response:", movieObject);
         displayMovie(movieObject);
     });
 }
@@ -298,14 +293,12 @@ addToListButton.addEventListener('click', function(){
         favourites.push(imdbID);
         favouritesMoviesJSON = JSON.stringify(favourites);
         localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
-        console.log('favouriteMoviesJSON -',favouritesMoviesJSON);
     } else {
         let indexOfID = favourites.indexOf(imdbID);
 
         favourites.splice(indexOfID, 1);
         favouritesMoviesJSON = JSON.stringify(favourites);
         localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
-        console.log('favouriteMoviesJSON -',favouroitesMoviesJSON);
     }
     if(bookmarkButtonPressed == false){
         addButtonIcon.className = "fa-solid fa-bookmark add-to-favourites-icon-for-a-movie";
@@ -378,7 +371,6 @@ function displayResult(object, whoCalled) {
             addMovieToTheListOnScreen(movie);
         }
     } else if(whoCalled === 'forSuggestions'){
-        console.log("suggestions detected");
         for(let movie of resultArray) {
             addMovieToTheListOnSuggestions(movie);
         }
@@ -427,7 +419,6 @@ function addEventListenerToBodyForHidingSuggestionsOnClick(){
 }
 function addEventListenerToVisitRepository(){
     visitRepository.addEventListener('click', function(){
-        console.log("clicked");
         window.open('https://github.com/rushab-rayalwar/IMDbClone');    
     })
 }
@@ -437,7 +428,6 @@ function main() {
         favourites = JSON.parse(savedArrayString);
     } else {
         favouritesMoviesJSON = JSON.stringify(favourites);
-        console.log('favouriteMoviesJSON -',favouritesMoviesJSON);
         localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
     }
     addEventListenerToSearchButton();
