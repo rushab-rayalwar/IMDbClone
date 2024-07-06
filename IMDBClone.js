@@ -142,14 +142,16 @@ function displayMovie(movieObject){
                 favouriteButtonIconHuge.className = 'fa-solid fa-bookmark';
 
                 favourites.push(imdbID);
+                console.log(favourites);
                 isIdFavourite = 1;
                 favouritesMoviesJSON = JSON.stringify(favourites);
                 localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
-            } else {
-                favouritesButtonIconHuge.className = 'fa-regular fa-bookmark';
+            } else if(isIdFavourite != -1) {
+                favouriteButtonIconHuge.className = 'fa-regular fa-bookmark';
                 let indexToBeRemoved = favourites.indexOf(imdbID);
-
+                console.log('index to be removed', indexToBeRemoved);
                 favourites.splice(indexToBeRemoved, 1);
+                console.log('favourites',favourites);
                 isIdFavourite = -1;
                 favouritesMoviesJSON = JSON.stringify(favourites);
                 localStorage.setItem('favouriteMovies',favouritesMoviesJSON);
