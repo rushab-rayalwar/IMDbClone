@@ -9,5 +9,3 @@ Features:
 6. Navigation: Back button is present on the 'movie-page' and the 'favourites' screens which directs the user to the 'search-results' screen. To view 'favourites', user can click the favourites button in the header.
    To go to the 'movie-page', the user can simply click on the movie from either the search results or favourites.
 7. Header-Styling: I have tried to make the header look exactly similar to the original IMDb website.
-
-## How To Use:
