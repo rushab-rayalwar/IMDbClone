@@ -1,10 +1,11 @@
-let bodyy = document.querySelector('body');
+let bodyy = document.querySelector('body');                            //GLOBAL VARIABLES
 let backButton = document.querySelector("#back-button-div");
 let searchInput = document.querySelector("#search-input");
 let searchButton = document.querySelector("#search-icon-div");
 let favouritesButtonInTheHeader = document.querySelector("#favourites-button-div");
 let suggestionsDiv = document.querySelector("#suggestions-div");
 let mainContentDiv = document.querySelector("#main-content");
+let mainEl = document.querySelector('main');
 let searchResult;
 let favourites = [];
 let lastSearched;
@@ -13,17 +14,9 @@ let visitRepository = document.querySelector("#visit-repository-div .header-text
 let savedArrayString;
 let favouritesMoviesJSON;
 
-function addEventListenerToSearchButton(){
-    searchButton.addEventListener('click',function(){
-        backButton.style.display = 'none';
-        let input = searchInput.value;
-        lastSearched = input;
-        //suggestionsDiv.innerText = '';
-        mainContentDiv.innerText = '';
-        fetchInfo(input, 'forPage');
-    });
-}
-function addFavouriteMovieToTheListOnScreen(movie){
+let loadingElement = document.createElement('div');   // creates the loading element whose display is either set to flex or none depending on the state
+
+function addFavouriteMovieToTheListOnScreen(movie){                     //FETCHES THE MOVIES' DATA IN THE FAVOURITES LIST
     let imdbID = movie.imdbID;
     let name = movie.Title;
     let year = movie.Year;
@@ -67,6 +60,7 @@ movieDiv.addEventListener('click',function(event){
     if(event.target == addToListButton || event.target == addButtonIcon){
     } else {
         backButton.style.display = 'none';
+        addLoadingElement();
         loadMovie(imdbID);
     }
 });
@@ -89,13 +83,22 @@ addToListButton.addEventListener('click', function(){
     },510);
 });
 }
-async function displayFavourites(){
+function addLoadingElement() {                                          // DISPLAYS LOADING ON THE SCREEN
+    loadingElement.style.display = 'flex';
+    console.log('loading');
+}
+function removeLoadingElement() {                                       // REMOVES THE LOADING TEXT ON SCREEN
+    loadingElement.style.display = 'none';
+    console.log('loaded');
+}
+async function displayFavourites(){                               //DISPLAYS THE FAVOURITES' LIST
     let requests = favourites.map(async function(id){
         let request = await fetch(`https://www.omdbapi.com/?&apikey=1f627bef&i=${id}`);
         let movieObject = await request.json();
         return movieObject;       // returns a promise that resolves into the movie object
     });
     Promise.all(requests).then(function(movieObjectArray){
+        removeLoadingElement();
         let numberOfMovies = movieObjectArray.length;
         if(numberOfMovies == 0){
             let emptySpanHtml = `<span id="list-empty">Empty...</span>`;
@@ -115,12 +118,14 @@ async function displayFavourites(){
         }
     });     
 }   
-function displayMovie(movieObject){
+function displayMovie(movieObject){                              //THIS ADDS THE DATA TO THE MOVIE'S INFO SCREEN
+    
     bodyy.style.overflow = 'hidden';
     let imdbID = movieObject.imdbID;
     let isIdFavourite = favourites.indexOf(imdbID);
     setTimeout(function(){
         mainContentDiv.innerHTML = '';
+        removeLoadingElement();
         let movieExpandedDiv = document.createElement('div');
         movieExpandedDiv.id = 'movie-expanded-div';
         mainContentDiv.appendChild(movieExpandedDiv);
@@ -223,8 +228,9 @@ function displayMovie(movieObject){
         });
     },510);
 }
-function loadMovie(imdbID){
+function loadMovie(imdbID){                                             //THIS FUNCTION FETCHES DETAILED DATA OF THE CLICKED MOVIE AND CALLS THE MOVIE'S INFO SCREEN FUNCTION
     mainContentDiv.style.opacity = '0';
+    addLoadingElement();
     let url = `https://omdbapi.com/?&apikey=1f627bef&i=${imdbID}`;
     let request = fetch(url);
     request.then(function(response){
@@ -233,7 +239,57 @@ function loadMovie(imdbID){
         displayMovie(movieObject);
     });
 }
-function addMovieToTheListOnScreen(movie){
+function addEventListenerToFavouritesButton(){                             //FAVOURITE BUTTON CAN ADD OR DELETE THE MOVIE'S ID TO THE FAVOURITES ARRAY
+    favouritesButtonInTheHeader.addEventListener("click", function(){
+        mainContentDiv.style.opacity = '0';
+        backButton.style.display = 'flex';
+        setTimeout(function(){
+            addLoadingElement();
+            mainContentDiv.textContent = '';
+            let favouritesName = `<span class="favourites-header">Favourites!</span>`;
+            mainContentDiv.insertAdjacentHTML('beforeend',favouritesName);
+            displayFavourites();
+        },550);
+    });
+}
+function addEventListenerToBackButton(){                                   //BACK BUTTON RETURNS THE USER FROM THE FAVOURITES SCREEN OR MOVIE'S SCREEN TO THE SEARCH RESULTS' SCREEN
+    backButton.addEventListener('click', function(){
+        bodyy.style.overflow = 'auto';
+        backButton.style.opacity = '0';
+        mainContentDiv.style.opacity = '0'
+        setTimeout(function(){
+            addLoadingElement();
+            backButton.style.display = 'none';
+            mainContentDiv.textContent = '';
+            mainContentDiv.style.opacity = '1';
+            fetchInfo(lastSearched,'forPage');
+        },510);
+    });
+}
+function addMovieToTheListOnSuggestions(movie){                              //THIS FUNCTION ADDS THE SUGGESTIONS TO THE SUGGESTIONS DIV
+    let name = movie.Title;
+    let suggestionDiv = document.createElement('div');
+    suggestionDiv.className = 'suggestion-div';
+    let spanName = document.createElement('span');
+    spanName.className = 'suggestion';
+    spanName.textContent = name;
+    suggestionDiv.appendChild(spanName);
+    let suggestionLine = document.createElement('div');
+    suggestionLine.className = 'line';
+    suggestionDiv.insertAdjacentElement('afterend',suggestionLine);
+    suggestionDiv.addEventListener('click', function(event){
+        suggestionsDiv.textContent = '';
+        suggestionsDiv.style.display = 'none';
+        mainContentDiv.textContent = '';
+        addLoadingElement();
+        fetchInfo(name, 'forPage');
+        backButton.style.display = 'none';
+        searchInput.value = name;
+        lastSearched = name;
+    });
+    suggestionsDiv.appendChild(suggestionDiv);
+}
+function addMovieToTheListOnScreen(movie){                                //THIS FUNCTION ADDS THE SEARCH RESULTS ON THE SCREEN
     let imdbID = movie.imdbID;
     let name = movie.Title;
     let year = movie.Year;
@@ -311,64 +367,11 @@ addToListButton.addEventListener('click', function(){
     };
 });
 }
-function addEventListenerToFavouritesButton(){
-    favouritesButtonInTheHeader.addEventListener("click", function(){
-        mainContentDiv.style.opacity = '0';
-        backButton.style.display = 'flex';
-        setTimeout(function(){
-            mainContentDiv.textContent = '';
-            let favouritesName = `<span class="favourites-header">Favourites!</span>`;
-            mainContentDiv.insertAdjacentHTML('beforeend',favouritesName);
-            displayFavourites();
-        },550);
-    });
-}
-function addEventListenerToBackButton(){
-    backButton.addEventListener('click', function(){
-        bodyy.style.overflow = 'auto';
-        backButton.style.opacity = '0';
-        mainContentDiv.style.opacity = '0'
-        setTimeout(function(){
-            
-            backButton.style.display = 'none';
-            mainContentDiv.textContent = '';
-            mainContentDiv.style.opacity = '1';
-            fetchInfo(lastSearched,'forPage');
-        },510);
-    });
-}
-function addMovieToTheListOnSuggestions(movie){
-    let name = movie.Title;
-//     let html = `<div class="suggestion-div">
-//     <span class="suggestion">${name}</span>
-// </div>
-// <div class="suggestion-line">
-//     <div class="line"></div>
-// </div>`;
-    let suggestionDiv = document.createElement('div');
-    suggestionDiv.className = 'suggestion-div';
-    let spanName = document.createElement('span');
-    spanName.className = 'suggestion';
-    spanName.textContent = name;
-    suggestionDiv.appendChild(spanName);
-    let suggestionLine = document.createElement('div');
-    suggestionLine.className = 'line';
-    suggestionDiv.insertAdjacentElement('afterend',suggestionLine);
-    suggestionDiv.addEventListener('click', function(event){
-        suggestionsDiv.textContent = '';
-        suggestionsDiv.style.display = 'none';
-        mainContentDiv.textContent = '';
-        fetchInfo(name, 'forPage');
-        backButton.style.display = 'none';
-        searchInput.value = name;
-        lastSearched = name;
-    });
-    suggestionsDiv.appendChild(suggestionDiv);
-    //suggestionsDiv.insertAdjacentHTML('beforeend', html);
-}
-function displayResult(object, whoCalled) {
+function displayResult(object, whoCalled) {                                         //AFTER THE RESULTS FOR A SEARCH ARE FETCHED, THE FUNCTION TO ARRANGE THE DATA IS CALLED
+                                                                                    //THIS FUNCTION ADDS DATA TO EITHER THE SUGGESTIONS BOX OR ON THE PAGE DEPENDING ON THE FUNCTION THAT CALLED THIS FUNCTION
     let resultArray = object.Search;
     if(whoCalled === 'forPage'){
+        removeLoadingElement();
         for(let movie of resultArray) {
             addMovieToTheListOnScreen(movie);
         }
@@ -378,7 +381,7 @@ function displayResult(object, whoCalled) {
         }
     }
 }
-function fetchInfo(name, whoCalled){
+function fetchInfo(name, whoCalled){                                                 //FETCHES THE SEARCHED NAME'S DATA FROM THE API
     let url = `https://www.omdbapi.com/?&apikey=1f627bef&s=${name.toString()}`;
     let request = fetch(url);
     request.then((response)=>{
@@ -386,22 +389,27 @@ function fetchInfo(name, whoCalled){
     }).then(function(object){
         searchResult =  object;
         if(whoCalled === 'forPage'){
-            let html = `<div class="favourites-header">Search Results For '${name}'</div>`
+            
+            mainContentDiv.innerText = '';
+            let html = `<div class="favourites-header">Search Results For '${name}'</div>`;
             mainContentDiv.insertAdjacentHTML('beforeend', html);
         }
         displayResult(object,whoCalled);
     });
-    // }).catch(function(error){
-    //     if(whoCalled === 'forPage'){
-    //         alert("No Movie Found...");
-    //         let emptySpanHtml = `<span id="list-empty">Empty...</span>`;
-    //         mainContentDiv.insertAdjacentHTML('beforeend', emptySpanHtml);
-    //     } else {
-    //         console.error('No suggestions found');
-    //     }
-    // });
 }
-function addEventListenerToSearchBar(){
+function addEventListenerToSearchButton(){                               //SEARCHES FOR THE TYPED MOVIE NAME
+    searchButton.addEventListener('click',function(){
+        backButton.style.display = 'none';
+        let input = searchInput.value;
+        lastSearched = input;
+        //suggestionsDiv.innerText = '';
+        mainContentDiv.innerText = '';
+        let loadingHTML = `<span class="main-screen-text">Loading...</span>`
+        mainContentDiv.innerHTML = loadingHTML;
+        fetchInfo(input, 'forPage');
+    });
+}
+function addEventListenerToSearchBar(){                                               //EVENT LISTENER TO UPDATE THE SUGGESITONS WHILE TYPING
     searchInput.addEventListener('input', function(){
         suggestionsDiv.style.display = 'block';
         suggestionsDiv.textContent = '';
@@ -409,7 +417,7 @@ function addEventListenerToSearchBar(){
         fetchInfo(textEntered, 'forSuggestions');
     });
 }
-function addEventListenerToBodyForHidingSuggestionsOnClick(){
+function addEventListenerToBodyForHidingSuggestionsOnClick(){                           //SUUGESTIONS HIDE WHEN THE USER CLICKS ON ANYTHING OTHER THAN THE SUGGESTIONS
     bodyy.style.height = 'calc(100vh - 4.5rem)';
     bodyy.addEventListener('click', function(event){
         if(event.target === suggestionsDiv || event.target.className === 'suggestion-div' || event.target.className === 'suggestion'){
@@ -419,12 +427,12 @@ function addEventListenerToBodyForHidingSuggestionsOnClick(){
         }
     });
 }
-function addEventListenerToVisitRepository(){
+function addEventListenerToVisitRepository(){                                           //ADDS LINK TO 'VISIT REPOSITORY' BUTTON
     visitRepository.addEventListener('click', function(){
         window.open('https://github.com/rushab-rayalwar/IMDbClone');    
     })
 }
-function main() {
+function main() {                                                                      //MAIN FUNCTION
     savedArrayString = localStorage.getItem('favouriteMovies');
     if(savedArrayString){
         favourites = JSON.parse(savedArrayString);
@@ -438,5 +446,11 @@ function main() {
     addEventListenerToBackButton();
     addEventListenerToBodyForHidingSuggestionsOnClick();
     addEventListenerToVisitRepository();
+
+    loadingElement.className = 'main';
+    loadingElement.id = 'loading';
+    loadingElement.style.display = 'none'
+    loadingElement.innerHTML = `<span class="main-screen-text">Loading...</span>`;
+    mainEl.appendChild(loadingElement);
 }
 main();

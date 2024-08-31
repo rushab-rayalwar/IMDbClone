@@ -3,6 +3,9 @@
     --list-item-background: #121212;
 }
 body{background-color: black;}
+/* loading text */
+#loading{ position:absolute; top: 50%; right: 50%; transform: translate(-50% -50%);
+}
 
 /* header */
 header{width:100%; position:absolute; top:0; right:0;}
@@ -14,7 +17,7 @@ header{width:100%; position:absolute; top:0; right:0;}
 #logo > span {font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif; font-weight: 500; font-size:1.4rem;}
 #menu{margin-right:25px;}
 #menu-icon{color:white; transform: scale(1.1); margin-right: 3px;}
-.header-text{color:white; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;cursor:pointer;}
+.header-text{color:white; font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;cursor:pointer;z-index: 2;}
 .header-text-dummy{color:rgb(151, 151, 151); font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;}
 input[type='text']{height:2rem; border-radius:6px 0 0 6px; border:none; padding: 0 0 0 10px; width: 45rem;}
 input[type='text']:focus{outline: 2px solid var(--main-color);}
@@ -36,8 +39,8 @@ input[type='text']:focus{outline: 2px solid var(--main-color);}
 
 /* movie list */
 main{margin-top: 4rem;}
-#welcome-text{color:rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; margin-top:10px;}
-#main-content{display:flex; align-items:center; flex-direction: column; transition: opacity 0.5s ease-out;}
+.main-screen-text{color:rgb(102, 102, 102); font-family: Arial, Helvetica, sans-serif; margin-top:10px; font-size: 1.5rem;}
+.main{display:flex; align-items:center; flex-direction: column; transition: opacity 0.5s ease-out;}
 .movie-result-list-item{cursor:pointer;width:55%; height: 110px;display:flex;justify-content:space-between;
     background-image: linear-gradient(to bottom, #1b1e23, #1b1e23) ; border-radius:10px; overflow:hidden; margin-bottom:10px;transition:opacity 0.5s ease-out;}
 .movie-result-list-item:hover{background-image: linear-gradient(to bottom, #121212, #1b1e23, #121212)}
@@ -82,7 +85,6 @@ main{margin-top: 4rem;}
 #imdb-votes-div{display:flex;transform:scale(0.8);margin-bottom:20px;}
 #imdb-votes{border-width:1px 0 1px 1px;border-color:rgba(255,255,255,0.3);border-style:solid;border-radius:0.9rem 0 0 0.9rem;padding-top:5px;text-align:center;width:6rem;height:1.5rem;display:block;color: white; font-family:Arial, Helvetica, sans-serif;background-color:rgba(70,255,70,0.5);}
 #imdb-votes-value{color:white;font-family:Arial, Helvetica, sans-serif;padding-top:5px;border-radius:0 0.9rem 0.9rem 0;border-width:1px 1px 1px 0;border-color: rgba(255,255,255,0.5);border-style:solid;width:6rem;text-align:center;background-color:rgba(255,255,255,0.3);}
-/*#box-office-div{margin-top:5px;}*/
 #box-office-div{display:flex;transform:scale(0.8);margin-bottom:20px;}
 #box-office{border-width:1px 0 1px 1px;border-color:rgba(255,255,255,0.3);border-style:solid;border-radius:0.9rem 0 0 0.9rem;padding-top:5px;text-align:center;width:6rem;height:1.5rem;display:block;color: white; font-family:Arial, Helvetica, sans-serif;background-color:rgba(70,255,70,0.5);}
 #box-office-value{color:white;font-family:Arial, Helvetica, sans-serif;padding-top:5px;border-radius:0 0.9rem 0.9rem 0;border-width:1px 1px 1px 0;border-color: rgba(255,255,255,0.5);border-style:solid;width:8rem;text-align:center;background-color:rgba(255,255,255,0.3);}
